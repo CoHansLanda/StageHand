@@ -13,5 +13,4 @@ async def on_ready():
 async def beginMovieMessage(ctx,* ,arg1):
     await ctx.send("HEY THE MOVIE HAS BEGUN ENJOY {} @everyone".format(arg1))
 
-
 bot.run(token)
