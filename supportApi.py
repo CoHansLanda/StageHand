@@ -60,7 +60,6 @@ def getActorID(actorName):
 def getMovieInfo(movieName):
     summaryJSON=ia.get_movie_synopsis(getMovieID(movieName))
     summary=summaryJSON['data']['plot'][0]
-    summary=summary[:summary.index('::')-1]
     return summary
 
 def getDirector(movieName):
