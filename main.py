@@ -6,7 +6,7 @@ from discord import guild
 from discord.ext import commands
 from discord.ext.commands.core import bot_has_permissions
 from discord.role import Role
-import webScrape
+import supportApi
 
 discordToken=os.environ.get('DISCORD_API_KEY')
 client=discord.Client()
@@ -22,7 +22,7 @@ async def movieBegin(ctx,*,args):
         movie=''.join(args)
         movie=movie[1:-1]
         await ctx.send('HAVE FUN WATCHING {}'.format(movie))
-        jsonDump=webScrape.getInfo(movie)
+        jsonDump=supportApi.getInfo(movie)
         await ctx.send("Runtime: {} minutes\nRatings: {}\nAspect Ratio: {}\nBox Office Gross: {}".format(jsonDump['runtime'],jsonDump['ratings'],jsonDump['aspect ratio'],jsonDump['gross']))
         await ctx.send("Genre:\n")
         for i in jsonDump['genre']:
@@ -39,8 +39,8 @@ async def compareBetween(ctx,*args):
         movie2=arg[arg.index('and')+3:]
         await ctx.send('Comparing between {} and {}'.format(movie1,movie2))
         await ctx.send('Working on the ratings....')
-        ratingsMovie1=webScrape.getMovieRatings(movie1)
-        ratingsMovie2=webScrape.getMovieRatings(movie2)
+        ratingsMovie1=supportApi.getMovieRatings(movie1)
+        ratingsMovie2=supportApi.getMovieRatings(movie2)
         await ctx.send("Ratings for {}\nIMDb:{}\tRotten Tomatoes:{}\n".format(movie1,ratingsMovie1["IMDb"],ratingsMovie1["Rotten Tomatoes"]))
         await ctx.send("Ratings for {}\nIMDb:{}\tRotten Tomatoes:{}\n".format(movie2,ratingsMovie2["IMDb"],ratingsMovie2["Rotten Tomatoes"]))
     except:
@@ -54,7 +54,7 @@ async def getMovieInfo(ctx,*,args):
         movie=''.join(args)
         movie=movie[1:-1]
         await ctx.send("Working on getting the summary.....")
-        Summary=webScrape.getMovieInfo(movie)
+        Summary=supportApi.getMovieInfo(movie)
         await ctx.send("Summary for {}:\n{}".format(movie,Summary))
     except:
         await ctx.send("Looks like something went wrong check back after a few mins :(")
@@ -66,7 +66,7 @@ async def getDir(ctx,*,args):
         movie=''.join(args)
         movie=movie[1:-1]
         await ctx.send("Working on getting the director.....")
-        await ctx.send("Director of {}:{}".format(movie,webScrape.getDirector(movie)))
+        await ctx.send("Director of {}:{}".format(movie,supportApi.getDirector(movie)))
     except:
         await ctx.send("Looks like something went wrong check back after a few mins :(")
 
@@ -76,7 +76,7 @@ async def getCast(ctx,*,args):
         movie=''.join(args)
         movie=movie[1:-1]
         await ctx.send("Working on getting the cast........")
-        cast=webScrape.getCast(movie)
+        cast=supportApi.getCast(movie)
         await ctx.send("Cast of {}:\n".format(movie))
         for i in range(12):
             await ctx.send("{} : {}".format(cast[i]['name'],cast[i].currentRole))
@@ -88,7 +88,7 @@ async def actorInfo(ctx,*,args):
         actor=''.join(args)
         actor=actor[1:-1]
         await ctx.send("Researching on {}......".format(actor))
-        dump=webScrape.getActorDet(actor)
+        dump=supportApi.getActorDet(actor)
         await ctx.send("Films:")
         for i in range(5):
             await ctx.send(dump['films']['actor'][i]['title'])
