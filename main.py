@@ -1,3 +1,4 @@
+import json
 import os
 import discord
 from discord import channel
@@ -15,54 +16,88 @@ bot=commands.Bot(command_prefix="~")
 async def on_ready():
     print('ready')
 
-@commands.has_permissions(manage_messages=True)
-@bot.command(name='Movie begin')
-async def join(ctx,member:discord.Member):
-    channel=ctx.author.voice.channel
-    await channel.connect()
-    Guild=ctx.guild
-    mutedRole=discord.utils.get(Role.name,name="MUTED")
+@bot.command(name='begin')
+async def movieBegin(ctx,*,args):
+    try:
+        movie=''.join(args)
+        movie=movie[1:-1]
+        await ctx.send('HAVE FUN WATCHING {}'.format(movie))
+        jsonDump=webScrape.getInfo(movie)
+        await ctx.send("Runtime: {} minutes\nRatings: {}\nAspect Ratio: {}\nBox Office Gross: {}".format(jsonDump['runtime'],jsonDump['ratings'],jsonDump['aspect ratio'],jsonDump['gross']))
+        await ctx.send("Genre:\n")
+        for i in jsonDump['genre']:
+            await ctx.send('\t-'+i)
+    except:
+        await ctx.send("Looks like something went wrong check back after a few mins :(")
 
-    if not mutedRole:
-        mutedRole=await guild.create_role(name="MUTED")
-        for channel in guild.channels:
-            await channel.set_permissions(mutedRole,speak=False, send_messages=True,read_message_history=True, read_messages=True)
-    await member.add_roles(mutedRole,reason=None)
-    await ctx.send("you have been muted {}".format(member))
 
 @bot.command(name='compare')
 async def compareBetween(ctx,*args):
-    arg=''.join(args)
-    movie1=arg[:arg.index('and')]
-    movie2=arg[arg.index('and')+3:]
-    await ctx.send('Comparing between {} and {}'.format(movie1,movie2))
-    await ctx.send('Working on the ratings....')
-    ratingsMovie1=webScrape.getMovieRatings(movie1)
-    ratingsMovie2=webScrape.getMovieRatings(movie2)
-    await ctx.send("Ratings for {}\nIMDb:{}\tRotten Tomatoes:{}\n".format(movie1,ratingsMovie1["IMDb"],ratingsMovie1["Rotten Tomatoes"]))
-    await ctx.send("Ratings for {}\nIMDb:{}\tRotten Tomatoes:{}\n".format(movie2,ratingsMovie2["IMDb"],ratingsMovie2["Rotten Tomatoes"]))
+    try:
+        arg=''.join(args)
+        movie1=arg[:arg.index('and')]
+        movie2=arg[arg.index('and')+3:]
+        await ctx.send('Comparing between {} and {}'.format(movie1,movie2))
+        await ctx.send('Working on the ratings....')
+        ratingsMovie1=webScrape.getMovieRatings(movie1)
+        ratingsMovie2=webScrape.getMovieRatings(movie2)
+        await ctx.send("Ratings for {}\nIMDb:{}\tRotten Tomatoes:{}\n".format(movie1,ratingsMovie1["IMDb"],ratingsMovie1["Rotten Tomatoes"]))
+        await ctx.send("Ratings for {}\nIMDb:{}\tRotten Tomatoes:{}\n".format(movie2,ratingsMovie2["IMDb"],ratingsMovie2["Rotten Tomatoes"]))
+    except:
+        await ctx.send("Looks like something went wrong check back after a few mins :(")
 
-@bot.command(name='Begin Movie')
-async def beginMovieMessage(ctx,* ,arg1):
-    await ctx.send("HEY THE MOVIE HAS BEGUN ENJOY {} @everyone".format(arg1))
+
 
 @bot.command(name='summary')
 async def getMovieInfo(ctx,*,args):
-    movie=''.join(args)
-    movie=movie[1:len(movie)-1]
-    await ctx.send("Working on getting the summary.....")
-    Summary=webScrape.getMovieInfo(movie)
-    await ctx.send("Summary for {}:\n{}".format(movie,Summary))
+    try:
+        movie=''.join(args)
+        movie=movie[1:-1]
+        await ctx.send("Working on getting the summary.....")
+        Summary=webScrape.getMovieInfo(movie)
+        await ctx.send("Summary for {}:\n{}".format(movie,Summary))
+    except:
+        await ctx.send("Looks like something went wrong check back after a few mins :(")
+
 
 @bot.command(name='director')
 async def getDir(ctx,*,args):
-    movie=''.join(args)
-    movie=movie[1:len(movie)-1]
-    await ctx.send("Working on getting the director.....")
-    await ctx.send("Director of {}:{}".format(movie,webScrape.getDirector(movie)))
+    try:
+        movie=''.join(args)
+        movie=movie[1:-1]
+        await ctx.send("Working on getting the director.....")
+        await ctx.send("Director of {}:{}".format(movie,webScrape.getDirector(movie)))
+    except:
+        await ctx.send("Looks like something went wrong check back after a few mins :(")
 
-
-
-
+@bot.command(name='cast')
+async def getCast(ctx,*,args):
+    try:
+        movie=''.join(args)
+        movie=movie[1:-1]
+        await ctx.send("Working on getting the cast........")
+        cast=webScrape.getCast(movie)
+        await ctx.send("Cast of {}:\n".format(movie))
+        for i in range(12):
+            await ctx.send("{} : {}".format(cast[i]['name'],cast[i].currentRole))
+    except Exception as e:
+        await ctx.send("Looks like something went wrong check back after a few mins :(")
+@bot.command(name='actor')
+async def actorInfo(ctx,*,args):
+    try:
+        actor=''.join(args)
+        actor=actor[1:-1]
+        await ctx.send("Researching on {}......".format(actor))
+        dump=webScrape.getActorDet(actor)
+        await ctx.send("Films:")
+        for i in range(5):
+            await ctx.send(dump['films']['actor'][i]['title'])
+        await ctx.send("Awards:")
+        for i in range(10):
+            await ctx.send('{} for {} from {} for the film {}'.format(dump['awards'][i]['result'],dump['awards'][i]['category'],dump['awards'][i]['award'],dump['awards'][i]['movies']['title']))
+    except Exception as e:
+        await ctx.send("Looks like something went wrong check back after a few mins :(")
+        print(e)
+        pass
 
 bot.run(discordToken)
