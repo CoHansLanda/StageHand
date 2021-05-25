@@ -1,3 +1,4 @@
+from tmdb import getBio, movieCredits
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import imdb
@@ -91,12 +92,15 @@ def getInfo(movieName):
     }
     return dump
 def getActorDet(actorName):
-    actorID=getActorID(actorName)
-    actor=ia.get_person(actorID,info=['awards','biography','filmography'])
-    actor.infoset2keys
-    dump={
-        'bio':actor['biography'],
-        'awards':actor['awards'],
-        'films':actor['filmography']
-    }
-    return dump
+    try:
+        actorID=getActorID(actorName)
+        actor=ia.get_person(actorID,info=['awards'])
+        actor.infoset2keys
+        dump={
+            'bio':getBio(actorName),
+            'awards':actor['awards'],
+            'films':movieCredits(actorName)
+        }
+        return dump
+    except Exception as e:
+        print(e)

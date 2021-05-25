@@ -1,10 +1,7 @@
 from asyncio.tasks import sleep
 import os
 import discord
-from discord import channel
-from discord.colour import Color
 from discord.ext import commands
-from discord.utils import sleep_until
 import supportApi
 
 discordToken=os.environ.get('DISCORD_API_KEY')
@@ -83,7 +80,7 @@ async def movieBegin(ctx,*,args):
             await ctx.send('\t-'+i)
     except Exception as e:
         await ctx.send("Looks like something went wrong check back after a few mins :(")
-        print(e)
+        print('Exception:'+e)
         pass
 
 @bot.command(name='interval')
@@ -190,17 +187,23 @@ async def actorInfo(ctx,*,args):
         actor=actor[1:-1]
         await ctx.send("Researching on {}......".format(actor))
         dump=supportApi.getActorDet(actor)
-        await ctx.send("Biography:\n{}".format(dump['biography']))
+        await ctx.send("Biography:\n{}".format(dump['bio']))
         await ctx.send("Films:")
-        for i in range(5):
-            await ctx.send(dump['films']['actor'][i]['title'])
+        for i in dump['films']:
+            await ctx.send(i)
         await ctx.send("Awards:")
         for i in range(10):
             await ctx.send('{} for {} from {} for the film {}'.format(dump['awards'][i]['result'],dump['awards'][i]['category'],dump['awards'][i]['award'],dump['awards'][i]['movies']['title']))
     except Exception as e:
         await ctx.send("Looks like something went wrong check back after a few mins :(")
+        print('Exception')
         print(e)
-        pass
+    except (ImportError,ImportWarning) as e:
+        print('Import error')
+        print(e)
+    except (KeyError) as e:
+        print('key error')
+        print(e)
 
 @bot.command(name='timetravel')
 async def timeTravel(ctx):
@@ -216,8 +219,11 @@ async def timeTravel(ctx):
         await sleep(10)
         newMsg=await fetchMessage(ctx,msg.id)
         react=newMsg.reactions
+        print(react)
+        print(type(react))
         reactionYesCount=react[0].count
         reactionNoCount=react[1].count
+        await mute(ctx,ctx.message.author)
         if(reactionYesCount>reactionNoCount):
             await ctx.send('Time travel confirmed @everyone')
         else:
