@@ -1,4 +1,4 @@
-from tmdb import getBio, movieCredits
+from tmdb import getBio, getMovieRuntime, movieCredits
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import imdb
@@ -38,8 +38,6 @@ def getMovieID(movieName):
     finally:
         return id
 
-
-
 def getActorID(actorName):
     try:
         people=ia.search_person(actorName)
@@ -58,39 +56,11 @@ def getActorID(actorName):
     finally:
         return id
 
-def getMovieInfo(movieName):
-    summaryJSON=ia.get_movie_synopsis(getMovieID(movieName))
-    summary=summaryJSON['data']['plot'][0]
-    return summary
-
 def getDirector(movieName):
     movie=ia.get_movie(getMovieID(movieName))
     director=movie['director'][0]
     return director
 
-def getCast(movieName):
-    movie=ia.get_movie(getMovieID(movieName))
-    entireCast=movie['cast']
-    return entireCast
-
-def getInfo(movieName):
-    movie=ia.get_movie(getMovieID(movieName))
-    ratings=movie.data['rating']
-    runtime=movie.data['runtimes']
-    runtime=''.join(runtime)
-    runtime=runtime[1:-2]
-    genre=movie.data['genres']
-    aspectRatio=movie.data['aspect ratio']
-    gross=movie.data['box office']['Cumulative Worldwide Gross']
-    dump={
-        'ratings':ratings,
-        'runtime':runtime,
-        'genre':genre,
-        'gross':gross,
-        'aspect ratio':aspectRatio,
-        'gross':gross
-    }
-    return dump
 def getActorDet(actorName):
     try:
         actorID=getActorID(actorName)

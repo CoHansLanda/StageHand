@@ -3,6 +3,8 @@ import os
 import discord
 from discord.ext import commands
 import supportApi
+from tmdb import getMovieSummary
+import tmdb
 
 discordToken=os.environ.get('DISCORD_API_KEY')
 client=discord.Client()
@@ -72,12 +74,21 @@ async def movieBegin(ctx,*,args):
                 await mute(ctx,i)
         movie=''.join(args)
         movie=movie[1:-1]
-        await ctx.send('HAVE FUN WATCHING {}'.format(movie))
-        jsonDump=supportApi.getInfo(movie)
-        await ctx.send("Runtime: {} minutes\nRatings: {}\nAspect Ratio: {}\nBox Office Gross: {}".format(jsonDump['runtime'],jsonDump['ratings'],jsonDump['aspect ratio'],jsonDump['gross']))
-        await ctx.send("Genre:\n")
-        for i in jsonDump['genre']:
-            await ctx.send('\t-'+i)
+        dump=tmdb.getMovieInfo(movie)
+        movieInfo=discord.Embed(
+            title=movie,
+            color=discord.Color.blue()
+        )
+        tagline=dump['tagline']
+        popularity=dump['popularity']
+        ratings=dump['ratings']
+        movieInfo.add_field(name='Tagline',value=tagline,inline=False)
+        for i in dump['genres']:
+            genre=i['name']
+            movieInfo.add_field(name='Genre',value=genre)
+        movieInfo.add_field(name='Popularity:',value=popularity)
+        movieInfo.add_field(name='Ratings',value=ratings)
+        await ctx.send(embed=movieInfo)
     except Exception as e:
         await ctx.send("Looks like something went wrong check back after a few mins :(")
         print('Exception:'+e)
@@ -144,7 +155,7 @@ async def getMovieInfo(ctx,*,args):
         movie=''.join(args)
         movie=movie[1:-1]
         await ctx.send("Working on getting the summary.....")
-        Summary=supportApi.getMovieInfo(movie)
+        Summary=getMovieSummary(movie)
         await ctx.send("Summary for {}:\n{}".format(movie,Summary))
     except Exception as e:
         await ctx.send("Looks like something went wrong check back after a few mins :(")
@@ -232,7 +243,6 @@ async def timeTravel(ctx):
         await ctx.send("Looks like something went wrong check back after a few mins :(")
         print(e)
         pass
-
 @bot.command()
 async def fetchMessage(ctx,msgID):
     msg=await ctx.fetch_message(msgID)
