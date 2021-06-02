@@ -9,4 +9,4 @@ This is a simple discord bot with the following functionalities:
   Command that shows the biography, films and awards won by an actor.
   Command to choose between three movie choices.
   
-  This bot was created using the discordpy and imdb module with webscraping (using Selenium) present as a backup (as many times the imdb module was not giving the right ID).
+  This bot was created using the discordpy, imdb module and the tmdb api with webscraping (using Selenium) present as a backup (as many times the imdb module was not giving the right ID).
