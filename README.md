@@ -7,6 +7,6 @@ This is a simple discord bot with the following functionalities:
   Command to provide summary for the movie and also find the director of a movie.
   Command to find the top billed cast of the movie.
   Command that shows the biography, films and awards won by an actor.
-  
+  Command to choose between three movie choices.
   
   This bot was created using the discordpy and imdb module with webscraping (using Selenium) present as a backup (as many times the imdb module was not giving the right ID).

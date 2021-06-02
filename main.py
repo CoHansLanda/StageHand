@@ -1,6 +1,7 @@
 from asyncio.tasks import sleep
 import os
 import discord
+from discord.colour import Color
 from discord.ext import commands
 import supportApi
 from tmdb import getMovieSummary
@@ -27,6 +28,7 @@ async def help(ctx):
     embed.add_field(name="~director '{movie name}'",value="Get director of movie",inline=False)
     embed.add_field(name="~cast '{movie name}'",value='Shows the top 12 cast members from the film',inline=False)
     embed.add_field(name="~actor '{actor name}'",value='Shows the awards, films starred in and a small paragraph about the actor',inline=False)
+    embed.add_field(name="~choose",value="Can't decide which movie to watch pop in your three top options and let the people decide. Watch a movie that is for the people, by the people and with the people. Pass in the three top choices comma seperated",inline=False)
     embed.add_field(name="~timetravel",value='Unmutes the author so as to request skipping forward or rewinding It then sends a poll asking everyone if they would like to "time travel" through the movie. ',inline=False)
     embed.add_field(name="~info",value="Get github repo and publish issues",inline=False)
     await ctx.send(embed=embed)
@@ -231,7 +233,6 @@ async def timeTravel(ctx):
         newMsg=await fetchMessage(ctx,msg.id)
         react=newMsg.reactions
         print(react)
-        print(type(react))
         reactionYesCount=react[0].count
         reactionNoCount=react[1].count
         await mute(ctx,ctx.message.author)
@@ -243,6 +244,53 @@ async def timeTravel(ctx):
         await ctx.send("Looks like something went wrong check back after a few mins :(")
         print(e)
         pass
+
+@bot.command(name='choose')
+async def choosePoll(ctx,*,args):
+    try:
+        print('Choosing')
+        movies=''.join(args)[1:-1].split(',')
+        chooseEmbed=discord.Embed(
+            title='Choose Movie',
+            color=discord.Color.purple(),
+            description="Let's choose between the two movies"
+        )
+        for movie in movies:
+            chooseEmbed.add_field(name=movie,value=getMovieSummary(movie),inline=True)
+        msg=await ctx.send(embed=chooseEmbed)
+        reaction1="1️⃣"
+        reaction2="2️⃣"
+        reaction3="3️⃣"
+        await msg.add_reaction(reaction1)
+        await msg.add_reaction(reaction2)
+        await msg.add_reaction(reaction3)
+        print('Sleeping')
+        await sleep(10)
+        newMsg=await fetchMessage(ctx,msg.id)
+        react=newMsg.reactions
+        reactCount=[[movies[0],react[0].count],[movies[1],react[1].count],[movies[2],react[2].count]]
+        reactCount.sort(key=lambda x:x[1])
+        await ctx.send('Looks like the public vote is to watch {}'.format(reactCount[2][0]))
+        print(reactCount)
+        dump=tmdb.getMovieInfo(reactCount[2][0])
+        movieInfo=discord.Embed(
+            title=reactCount[2][0],
+            color=discord.Color.blue()
+        )
+        tagline=dump['tagline']
+        popularity=dump['popularity']
+        ratings=dump['ratings']
+        movieInfo.add_field(name='Tagline',value=tagline,inline=False)
+        for i in dump['genres']:
+            genre=i['name']
+            movieInfo.add_field(name='Genre',value=genre)
+        movieInfo.add_field(name='Popularity:',value=popularity)
+        movieInfo.add_field(name='Ratings',value=ratings)
+        await ctx.send(embed=movieInfo)
+    except Exception as e:
+        print('Exception')
+        print(e)
+
 @bot.command()
 async def fetchMessage(ctx,msgID):
     msg=await ctx.fetch_message(msgID)

@@ -5,7 +5,7 @@ TMDb_API_KEY=os.environ.get('TMDB_API_KEY')
 url='https://api.themoviedb.org/3/'
 
 def getTMDbMovieID(movieName):
-    response=requests.get(url+'search/movie?api_key='+str(TMDb_API_KEY)+'&query='+movieName)
+    response=requests.get(url+'search/movie?api_key='+TMDb_API_KEY+'&query='+movieName)
     if(response.status_code==200):
         res=json.loads(response.text)
         result=res['results']
@@ -17,7 +17,6 @@ def getTMDbPersonid(actorName):
     actorName=actorName.replace(' ','+')
     response=requests.get(url+'search/person?api_key='+TMDb_API_KEY+'&language=en-US&query='+actorName+'&page=1')
     if(response.status_code==200):
-        print(url+'search/person?api_key='+TMDb_API_KEY+'&language=en-US&query='+actorName+'&page=1&include_adult=True')
         res=json.loads(response.text)
         id=res['results'][0]['id']
         return id
@@ -65,25 +64,9 @@ def getMovieSummary(movieName):
         else:
             print('Wrong status code:'+response.status_code)
     except Exception as e:
-        print(e)
-
-def getMovieRuntime(movieName):
-    try:
-        id=getTMDbMovieID(movieName)
-        response=requests.get(url+'/movie/'+id+'?api_key='+TMDb_API_KEY+'&language=en-US')
-        if(response.status_code==200):
-            res=json.loads(response.text)
-            runtime=res['runtime']
-            return int(runtime)
-        else:
-            print('Wrong Status code'+str(response.status_code))
-            raise Exception
-    except Exception as e:
-        print('Exception')
-        print(e)
+        print(e)    
 
 def getMovieInfo(movieName):
-    print(movieName)
     try:
         movieName=movieName.replace(' ','+')
         id=getTMDbMovieID(movieName)
@@ -108,5 +91,3 @@ def getMovieInfo(movieName):
             raise Exception
     except Exception as e:
         print('Exception'+str(e))
-# dump=getMovieInfo('Scott Pilgrim vs the world')
-# print(dump['tagline'])

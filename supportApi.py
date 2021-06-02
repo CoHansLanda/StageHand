@@ -1,4 +1,4 @@
-from tmdb import getBio, getMovieRuntime, movieCredits
+from tmdb import getBio, movieCredits
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import imdb
@@ -74,3 +74,8 @@ def getActorDet(actorName):
         return dump
     except Exception as e:
         print(e)
+
+def getCast(movieName):
+    movie=ia.get_movie(getMovieID(movieName))
+    entireCast=movie['cast']
+    return entireCast
