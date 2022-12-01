@@ -3,11 +3,13 @@ import os
 import discord
 from discord.colour import Color
 from discord.ext import commands
+from dotenv import load_dotenv
 import supportApi
 from tmdb import getMovieSummary
 import tmdb
 
-discordToken="ODQzNzYxNzY4MzcxMDYwNzU2.Guc0Rz.hOn42LUMBg60ZYx_b4Tgj6WLYnzXU6D-yRSBBg"
+discordToken = os.getenv("discordToken")
+load_dotenv()
 bot=commands.Bot(command_prefix="~")
 bot.remove_command('help')
 
