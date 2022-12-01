@@ -7,10 +7,13 @@ import supportApi
 from tmdb import getMovieSummary
 import tmdb
 
-discordToken=os.environ.get('DISCORD_API_KEY')
-client=discord.Client()
+discordToken="ODQzNzYxNzY4MzcxMDYwNzU2.Guc0Rz.hOn42LUMBg60ZYx_b4Tgj6WLYnzXU6D-yRSBBg"
 bot=commands.Bot(command_prefix="~")
 bot.remove_command('help')
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user.name} has connected to Discord!')
 
 @bot.command(name='help')
 async def help(ctx):
@@ -41,8 +44,6 @@ async def info(ctx):
         description='[Github Repo](https://github.com/CoHansLanda/discord-bot-main)\n[Issues](https://github.com/CoHansLanda/discord-bot-main/issues)'
     )
     await ctx.send(embed=embedInfo)
-
-
 
 @bot.command(name='mute')
 async def mute(ctx,member: discord.Member):
@@ -296,4 +297,4 @@ async def fetchMessage(ctx,msgID):
     msg=await ctx.fetch_message(msgID)
     return msg
 
-bot.run(discordToken)
+bot.run("ODQzNzYxNzY4MzcxMDYwNzU2.Guc0Rz.hOn42LUMBg60ZYx_b4Tgj6WLYnzXU6D-yRSBBg")

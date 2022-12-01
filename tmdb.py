@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-TMDb_API_KEY=os.environ.get('TMDB_API_KEY')
+TMDb_API_KEY="490ba5666218939755ab429e1d3d7720"
 url='https://api.themoviedb.org/3/'
 
 def getTMDbMovieID(movieName):

@@ -4,9 +4,9 @@ from selenium.webdriver.common.keys import Keys
 import imdb
 from imdb.Person import Person
 ia=imdb.IMDb()
-PATH="C:\Program Files (x86)\chromedriver.exe"
+PATH="/opt/homebrew/bin/chromedriver"
 def getMovieRatings(movieName):
-    driver=webdriver.Chrome(PATH)
+    driver=webdriver.Chrome(series = PATH)
     driver.get("https://www.google.com/")
     searchBox=driver.find_element_by_tag_name("input")
     searchBox.send_keys(movieName)
@@ -43,7 +43,7 @@ def getActorID(actorName):
         people=ia.search_person(actorName)
         id=people[0].personID
     except:
-        driver=webdriver.Chrome(PATH)
+        driver=webdriver.Chrome(series = PATH)
         driver.get("https://www.google.com/")
         searchBox=driver.find_element_by_tag_name("input")
         searchBox.send_keys(actorName)
@@ -79,3 +79,6 @@ def getCast(movieName):
     movie=ia.get_movie(getMovieID(movieName))
     entireCast=movie['cast']
     return entireCast
+
+if __name__ == "__main__":
+    print(getActorDet("Robert Downey Jr"))
