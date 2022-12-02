@@ -1,5 +1,6 @@
-import imdb
-ia = imdb.IMDb()
-items = ia.search_movie('Avengers')
-for i in items:
-    print(i)
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+print(os.getenv("discordToken"))

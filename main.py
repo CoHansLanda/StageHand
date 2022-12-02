@@ -8,8 +8,8 @@ import supportApi
 from tmdb import getMovieSummary
 import tmdb
 
-discordToken = os.getenv("discordToken")
 load_dotenv()
+discordToken = os.getenv("discordToken")
 bot=commands.Bot(command_prefix="~")
 bot.remove_command('help')
 
@@ -299,4 +299,4 @@ async def fetchMessage(ctx,msgID):
     msg=await ctx.fetch_message(msgID)
     return msg
 
-bot.run("ODQzNzYxNzY4MzcxMDYwNzU2.Guc0Rz.hOn42LUMBg60ZYx_b4Tgj6WLYnzXU6D-yRSBBg")
+bot.run(discordToken)
