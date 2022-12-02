@@ -10,3 +10,5 @@ This is a simple discord bot with the following functionalities:
   Command to choose between three movie choices.
   
   This bot was created using the discordpy, imdb module and the tmdb api with webscraping (using Selenium) present as a backup (as many times the imdb module was not giving the right ID).
+
+https://discord.com/oauth2/authorize?client_id=843761768371060756&permissions=53719845200&scope=bot
